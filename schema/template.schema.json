@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://certifieddata.io/schemas/synthetic-template/v1.json",
+  "title": "CertifiedData Synthetic Template",
+  "description": "A template definition the CertifiedData generator can use to produce certified synthetic datasets.",
+  "type": "object",
+  "required": ["id", "name", "description", "domain", "algorithm", "columns", "version"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{2,63}$",
+      "description": "Stable slug used by the generator. Lowercase, dash-separated."
+    },
+    "name": { "type": "string", "minLength": 3, "maxLength": 120 },
+    "description": { "type": "string", "minLength": 10, "maxLength": 1000 },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "finance",
+        "healthcare",
+        "fraud",
+        "hr",
+        "retail",
+        "telecom",
+        "insurance",
+        "other"
+      ]
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 2, "maxLength": 40 },
+      "maxItems": 20
+    },
+    "algorithm": {
+      "type": "object",
+      "required": ["name"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string", "enum": ["CTGAN", "TVAE", "GaussianCopula"] },
+        "epochs": { "type": "integer", "minimum": 10, "maximum": 2000 },
+        "batch_size": { "type": "integer", "minimum": 16, "maximum": 4096 },
+        "embedding_dim": { "type": "integer", "minimum": 8, "maximum": 512 }
+      }
+    },
+    "target_rows_default": { "type": "integer", "minimum": 100, "maximum": 100000 },
+    "target_rows_max_anonymous": { "type": "integer", "minimum": 100, "maximum": 1000 },
+    "target_rows_max_free": { "type": "integer", "minimum": 100, "maximum": 10000 },
+    "columns": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "items": { "$ref": "#/$defs/column" }
+    },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" }
+  },
+  "$defs": {
+    "column": {
+      "type": "object",
+      "required": ["name", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_]{0,62}$"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "integer",
+            "float",
+            "categorical",
+            "boolean",
+            "timestamp",
+            "date",
+            "string",
+            "uuid"
+          ]
+        },
+        "description": { "type": "string", "maxLength": 500 },
+        "pii_class": {
+          "type": "string",
+          "enum": ["none", "direct", "quasi", "sensitive"],
+          "description": "PII classification — governs downstream masking and DP handling (when DP is enabled)."
+        },
+        "nullable": { "type": "boolean", "default": false },
+        "distribution": {
+          "type": "object",
+          "description": "Distribution hints passed to the generator. Structure depends on `type`.",
+          "additionalProperties": true
+        },
+        "constraints": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "min": {},
+            "max": {},
+            "values": { "type": "array" },
+            "regex": { "type": "string" },
+            "unique": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}

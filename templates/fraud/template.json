@@ -1,0 +1,34 @@
+{
+  "id": "fraud-detection",
+  "name": "Fraud Detection — Card Transactions",
+  "description": "Card-present and card-not-present transactions with labeled fraud outcomes. Designed for classifier training, threshold tuning, and red-team stress testing.",
+  "domain": "fraud",
+  "tags": ["fraud", "payments", "classification", "imbalanced"],
+  "algorithm": {
+    "name": "CTGAN",
+    "epochs": 300,
+    "batch_size": 500,
+    "embedding_dim": 128
+  },
+  "target_rows_default": 1000,
+  "target_rows_max_anonymous": 1000,
+  "target_rows_max_free": 10000,
+  "version": "1.2.0",
+  "columns": [
+    { "name": "transaction_id", "type": "uuid", "pii_class": "none" },
+    { "name": "ts", "type": "timestamp", "pii_class": "none" },
+    { "name": "amount", "type": "float", "pii_class": "none", "constraints": { "min": 0.01, "max": 25000 } },
+    { "name": "currency", "type": "categorical", "pii_class": "none", "constraints": { "values": ["USD", "EUR", "GBP", "JPY", "CAD"] } },
+    { "name": "merchant_category", "type": "categorical", "pii_class": "none", "constraints": { "values": ["grocery", "fuel", "travel", "online_goods", "online_services", "restaurant", "atm", "other"] } },
+    { "name": "merchant_country", "type": "categorical", "pii_class": "none" },
+    { "name": "card_country", "type": "categorical", "pii_class": "quasi" },
+    { "name": "card_bin", "type": "string", "pii_class": "quasi", "constraints": { "regex": "^[0-9]{6}$" } },
+    { "name": "device_id_hash", "type": "string", "pii_class": "quasi" },
+    { "name": "entry_mode", "type": "categorical", "pii_class": "none", "constraints": { "values": ["chip", "swipe", "contactless", "cnp_keyed", "cnp_stored"] } },
+    { "name": "is_3ds", "type": "boolean", "pii_class": "none" },
+    { "name": "velocity_1h", "type": "integer", "pii_class": "none", "constraints": { "min": 0, "max": 200 } },
+    { "name": "velocity_24h", "type": "integer", "pii_class": "none", "constraints": { "min": 0, "max": 1000 } },
+    { "name": "amount_zscore_cust_30d", "type": "float", "pii_class": "none" },
+    { "name": "is_fraud", "type": "boolean", "pii_class": "none", "description": "Ground-truth fraud label. Base rate ~1.5%." }
+  ]
+}

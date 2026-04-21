@@ -1,0 +1,32 @@
+{
+  "id": "healthcare-claims",
+  "name": "Healthcare Claims & Outcomes",
+  "description": "De-identified healthcare claim lines with diagnosis, procedure, and outcome flags. Suitable for readmission risk modeling and utilization analytics.",
+  "domain": "healthcare",
+  "tags": ["healthcare", "claims", "readmission", "phi-like"],
+  "algorithm": {
+    "name": "CTGAN",
+    "epochs": 400,
+    "batch_size": 500,
+    "embedding_dim": 128
+  },
+  "target_rows_default": 1000,
+  "target_rows_max_anonymous": 1000,
+  "target_rows_max_free": 10000,
+  "version": "1.1.0",
+  "columns": [
+    { "name": "claim_id", "type": "uuid", "pii_class": "none" },
+    { "name": "patient_pseudo_id", "type": "string", "pii_class": "quasi", "description": "Stable pseudonymous patient key. Not a real identifier." },
+    { "name": "admit_date", "type": "date", "pii_class": "quasi" },
+    { "name": "discharge_date", "type": "date", "pii_class": "quasi" },
+    { "name": "length_of_stay_days", "type": "integer", "pii_class": "none", "constraints": { "min": 0, "max": 365 } },
+    { "name": "age_bucket", "type": "categorical", "pii_class": "quasi", "constraints": { "values": ["0-17", "18-34", "35-49", "50-64", "65-79", "80+"] } },
+    { "name": "sex_at_birth", "type": "categorical", "pii_class": "sensitive", "constraints": { "values": ["F", "M", "U"] } },
+    { "name": "primary_dx_chapter", "type": "categorical", "pii_class": "sensitive", "description": "ICD-10 chapter letter only — not full code." },
+    { "name": "primary_procedure_class", "type": "categorical", "pii_class": "sensitive" },
+    { "name": "payer_type", "type": "categorical", "pii_class": "none", "constraints": { "values": ["commercial", "medicare", "medicaid", "self_pay", "other"] } },
+    { "name": "allowed_amount", "type": "float", "pii_class": "none" },
+    { "name": "readmitted_30d", "type": "boolean", "pii_class": "none" },
+    { "name": "ed_visits_prior_90d", "type": "integer", "pii_class": "none", "constraints": { "min": 0, "max": 50 } }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "id": "finance-retail-lending",
+  "name": "Retail Lending — Underwriting Features",
+  "description": "Applicant features and decision outcomes for retail lending — useful for underwriting model training and fairness testing across protected classes.",
+  "domain": "finance",
+  "tags": ["finance", "lending", "underwriting", "fairness"],
+  "algorithm": {
+    "name": "CTGAN",
+    "epochs": 350,
+    "batch_size": 500,
+    "embedding_dim": 128
+  },
+  "target_rows_default": 1000,
+  "target_rows_max_anonymous": 1000,
+  "target_rows_max_free": 10000,
+  "version": "1.1.0",
+  "columns": [
+    { "name": "application_id", "type": "uuid", "pii_class": "none" },
+    { "name": "applied_at", "type": "timestamp", "pii_class": "none" },
+    { "name": "requested_amount_usd", "type": "float", "pii_class": "none", "constraints": { "min": 500, "max": 1000000 } },
+    { "name": "product", "type": "categorical", "pii_class": "none", "constraints": { "values": ["personal_loan", "auto_loan", "credit_card", "mortgage"] } },
+    { "name": "term_months", "type": "integer", "pii_class": "none", "constraints": { "min": 6, "max": 360 } },
+    { "name": "applicant_age_bucket", "type": "categorical", "pii_class": "quasi", "constraints": { "values": ["18-24", "25-34", "35-49", "50-64", "65+"] } },
+    { "name": "annual_income_usd", "type": "float", "pii_class": "sensitive" },
+    { "name": "employment_type", "type": "categorical", "pii_class": "quasi", "constraints": { "values": ["w2", "self_employed", "retired", "student", "unemployed"] } },
+    { "name": "credit_score", "type": "integer", "pii_class": "sensitive", "constraints": { "min": 300, "max": 850 } },
+    { "name": "dti_ratio", "type": "float", "pii_class": "sensitive", "constraints": { "min": 0, "max": 2 } },
+    { "name": "delinquencies_24m", "type": "integer", "pii_class": "sensitive", "constraints": { "min": 0, "max": 50 } },
+    { "name": "collateralized", "type": "boolean", "pii_class": "none" },
+    { "name": "decision", "type": "categorical", "pii_class": "none", "constraints": { "values": ["approved", "declined", "manual_review"] } },
+    { "name": "decision_reason_codes", "type": "string", "pii_class": "none", "description": "Pipe-delimited reason codes aligned with internal adverse-action taxonomy." }
+  ]
+}
